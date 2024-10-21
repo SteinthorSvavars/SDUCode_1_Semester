@@ -24,7 +24,7 @@ int main(void) {
 
     for(int i = 0; i >=7; i++){
       printf("Type temp");
-      scanf("%d", input);
+      scanf("%d", &input);
       tempweek[i] = input; 
     }
     min = tempweek[0];
