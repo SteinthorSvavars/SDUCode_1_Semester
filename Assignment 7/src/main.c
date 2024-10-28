@@ -11,22 +11,25 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
+
+
 #include "usart.h"
 
 int main(void) {  
 
   int input;  
 
+  /*  
   uart_init(); // open the communication to the microcontroller
-  io_redirect(); // redirect input and output to the communication
-
+  io_redirect(); // redirect input and output to the communication  
+  */
+  
+  DDRC = 0x0F;
+  DDRD = 0xF0;
+  
     
   while(1) {
-		
-	  printf("Type in a number \n");
-    scanf("%d", &input);
-    printf("The number you typed is %d is %x in hexadecimal \n", input, input);
-	  _delay_ms(1000)	;
+		if()
 
   }
   
