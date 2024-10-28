@@ -11,20 +11,19 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <htc.h>
-#include <xc.h>
 
 #include <avr/io.h>
 #include <util/delay.h>
 
 /* I2C coms */
 #include "i2cmaster.h"
-/* LCD */
-#include "lcd.c"
+/* LCD */ 
 #include "lcd.h"
 /* Temp sens */
+/*
 #include "lm75.c"
 #include "lm75.h"
+*/
 
 //#include "twimaster.c"
 #include "usart.h"
@@ -66,9 +65,7 @@
 #define GPD6 D6
 #define GPD7 D7
 
-int main(void) {  
-
-  int input;  
+int main(void) {   
   /*  
   uart_init(); // open the communication to the microcontroller
   io_redirect(); // redirect input and output to the communication  
@@ -76,35 +73,43 @@ int main(void) {
   
   DDRC = 0xF0;
   DDRD = 0xFF;
-
-  PORTC = 0x0F;
-  PORTD = 0x00;
   
+  PORTC = 0x3F;
+
+  i2c_init(); 
+  LCD_init();
     
   while(1) {
-		if(C0 == 1){
+    PORTC = 0x3F;
+    LCD_set_cursor(2,1);
+
+		if(PINC == 0b00111110){
       do{
-        D4 = 1;
-      }while(C0 == 1);
-      D4 = 0;
+        PORTD = 0x10;
+        printf("DI_0 ");
+      }while(PINC == 0b00111110);
+      PORTD = 0x00;
     }
-    else if(C1 == 1){
+    else if(PINC == 0b00111101){
       do{
-        D5 = 1;
-      }while(C1 == 1);
-      D5 = 0;
+        PORTD = 0x20;
+        printf("DI_1 ");
+      }while(PINC == 0b00111101);
+      PORTD = 0x00;
     }
-    else if(C2 == 1){
+    else if(PINC == 0b00111011){
       do{
-        D6 = 1;
-      }while(C2 == 1);
-      D6 = 0;
+        PORTD = 0x40;
+        printf("DI_2 ");
+      }while(PINC == 0b00111011);
+      PORTD = 0x00;
     }
-    else if(C3 == 1){
+    else if(PINC == 0b00110111){
       do{
-        D7 = 1;
-      }while(C3 == 1);
-      D7 = 0;
+        PORTD = 0x80;
+        printf("DI_3 ");
+      }while(PINC == 0b00110111);
+      PORTD = 0x00;
     }
 
   }
