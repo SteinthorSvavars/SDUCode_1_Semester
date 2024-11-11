@@ -8,25 +8,86 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
+
 #include <avr/io.h>
 #include <util/delay.h>
 
+/* I2C coms */
+/*
+#include "i2cmaster.h"
+*/
+/* LCD */ 
+/*
+#include "lcd.h"
+*/
+/* Temp sens */
+/*
+#include "lm75.c"
+#include "lm75.h"
+*/
+
+//#include "twimaster.c"
 #include "usart.h"
 
-int main(void) {  
+int LED_ENT;
 
-  int input;  
 
+int main(void) {   
+  /*  
   uart_init(); // open the communication to the microcontroller
-  io_redirect(); // redirect input and output to the communication
+  io_redirect(); // redirect input and output to the communication  
+  */
+  
+  DDRC = 0xF0;
+  DDRD = 0xFF;
+  
+  PORTC = 0x3F;
 
+ /* i2c_init(); 
+  LCD_init(); */
     
   while(1) {
-		
-	  printf("Type in a number \n");
-    scanf("%d", &input);
-    printf("The number you typed is %d is %x in hexadecimal \n", input, input);
-	  _delay_ms(1000)	;
+    PORTC = 0x3F;
+   // LCD_set_cursor(2,1);
+
+		if(PINC == 0b00111110){
+      for(int i = 0; i < 20; i++){
+        _delay_ms(10);
+      }
+        if(LED_ENT == 0){
+        LED_ENT = 1;
+        PORTD = 0x10;
+      }
+      else if(LED_ENT == 1){
+        LED_ENT = 0;
+        PORTD = 0x00;
+      }
+      
+    }
+
+    
+    else if(PINC == 0b00111101){
+      do{
+        PORTD = 0x20;
+        printf("DI_1 ");
+      }while(PINC == 0b00111101);
+      PORTD = 0x00;
+    }
+    else if(PINC == 0b00111011){
+      do{
+        PORTD = 0x40;
+        printf("DI_2 ");
+      }while(PINC == 0b00111011);
+      PORTD = 0x00;
+    }
+    else if(PINC == 0b00110111){
+      do{
+        PORTD = 0x80;
+        printf("DI_3 ");
+      }while(PINC == 0b00110111);
+      PORTD = 0x00;
+    }
 
   }
   
