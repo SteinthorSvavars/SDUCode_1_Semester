@@ -30,7 +30,7 @@
 //#include "twimaster.c"
 #include "usart.h"
 
-int LED_ENT;
+
 
 
 int main(void) {   
@@ -50,46 +50,10 @@ int main(void) {
   while(1) {
     PORTC = 0x3F;
    // LCD_set_cursor(2,1);
-
-		if(PINC == 0b00111110){
-      for(int i = 0; i < 20; i++){
-        _delay_ms(10);
-      }
-        if(LED_ENT == 0){
-        LED_ENT = 1;
-        PORTD = 0x10;
-      }
-      else if(LED_ENT == 1){
-        LED_ENT = 0;
-        PORTD = 0x00;
-      }
-      
-    }
-
-    
-    else if(PINC == 0b00111101){
-      do{
-        PORTD = 0x20;
-        printf("DI_1 ");
-      }while(PINC == 0b00111101);
-      PORTD = 0x00;
-    }
-    else if(PINC == 0b00111011){
-      do{
-        PORTD = 0x40;
-        printf("DI_2 ");
-      }while(PINC == 0b00111011);
-      PORTD = 0x00;
-    }
-    else if(PINC == 0b00110111){
-      do{
-        PORTD = 0x80;
-        printf("DI_3 ");
-      }while(PINC == 0b00110111);
-      PORTD = 0x00;
-    }
-
+   PORTD = 0x10;
+   _delay_ms(250);
+   PORTD = 0x00;
+   _delay_ms(250);
   }
-  
   return 0;
 }
