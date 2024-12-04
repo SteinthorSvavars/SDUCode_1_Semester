@@ -13,19 +13,19 @@
 ||
 ||	Demo:
 || 1.	#define LED		A, 0		|| 6. 	PinModeToggle(BUTTON);
-|| 2.	#define BUTTON	A, 1		|| 7. 	TemSensorWrite(LED, LOW);
-|| 3.								|| 8. 	TemSensorWrite(LED, HIGH);
+|| 2.	#define BUTTON	A, 1		|| 7. 	DigitalWrite(LED, LOW);
+|| 3.								|| 8. 	DigitalWrite(LED, HIGH);
 || 4. 	PinMode(BUTTON, OUTPUT);	|| 9. 	DigitalLevelToggle(LED);
-|| 5. 	PinMode(LED, OUTPUT);		||10.	int a = TempSensorRead(BUTTON);
+|| 5. 	PinMode(LED, OUTPUT);		||10.	int a = DigitalRead(BUTTON);
 ||
 */
 #include <avr/io.h>
 
 //----- I/O Macros -----
 //Macros to edit PORT, DDR and PIN
-#define PinMode(			x, y)	( 		y 			?	_SET(DDR, x)	:	_CLEAR(DDR, x)		)
-#define TemSensorWrite(		x, y)	( 		y 			?	_SET(PORT, x)	:	_CLEAR(PORT, x)		)
-//#define TemSensorRead(		x)		(						_GET(PIN, x)							)
+#define PinMode(			x , y)	//( 		y 			?	_SET(DDR, x)	:	_CLEAR(DDR, x)		)
+#define DigitalWrite(		x, y)	//( 		y 			?	_SET(PORT, x)	:	_CLEAR(PORT, x)		)
+#define DigitalRead(        x)		//(						_GET(PIN, x)							)
 #define PinModeToggle(		x)		(						_TOGGLE(DDR, x)							)
 #define DigitalLevelToggle(	x)		(						_TOGGLE(PORT, x)						)
 
@@ -40,9 +40,9 @@
 #define DDR(	port)				(_DDR(	port))
 #define PIN(	port)				(_PIN(	port))
 
-#define _PORT(	port)				(PORT##	port)
+/*#define _PORT(	port)				(PORT##	port)
 #define _DDR(	port)				(DDR##	port)
-#define _PIN(	port)				(PIN##	port)
+#define _PIN(	port)				(PIN##	port)*/
 
 #define _SET(	type, port, bit)	(	BitSet(		(type##port),	bit)	)
 #define _CLEAR(	type, port, bit)	(	BitClear(	(type##port),	bit)	)
@@ -56,5 +56,6 @@
 #define High		!Low
 #define False		0
 #define True		!False
+#define print       printf
 //------------------
 #endif

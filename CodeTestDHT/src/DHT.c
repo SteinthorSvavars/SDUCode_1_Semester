@@ -34,12 +34,14 @@ void DHT_Setup()
 //Get sensor status.
 enum DHT_Status_t DHT_GetStatus()
 {
+	
 	return (__DHT_STATUS);
 }
 
 //Read raw buffer from sensor.
 enum DHT_Status_t DHT_ReadRaw(uint8_t Data[4])
 {
+	
 	uint8_t buffer[5] = {0, 0, 0, 0, 0};
 	uint8_t retries, i;
 	int8_t j;
@@ -50,20 +52,20 @@ enum DHT_Status_t DHT_ReadRaw(uint8_t Data[4])
 	if (__DHT_STATUS == DHT_Ok)
 	{
 		//Request data
-		DDRB |= (1<<PB0);			//DHT_PIN = Output
-		PORTD &= ~_BV(PORTD0);
-		
+		DigitalWrite(DHT_Pin, Low);			//DHT_PIN = 0
+		PinMode(DHT_Pin, Output);			//DHT_PIN = Output
 		_delay_ms(__DHT_Delay_Read);
 
 		//Setup DHT_PIN as input with pull-up resistor so as to read data
-		DDRB |= (0<<PB0);			//DHT_PIN = Input
-		PORTB = 0x01;		//DHT_PIN = 1 (Pull-up resistor)
-		
+		DigitalWrite(DHT_Pin, High);		//DHT_PIN = 1 (Pull-up resistor)
+		PinMode(DHT_Pin, Input);			//DHT_PIN = Input
 
 		//Wait for response for 20-40us
 		retries = 0;
-		while (PINB0 == 1)
+		while (DHT_Pin == High)
 		{
+		printf("Test");
+
 			_delay_us(2);
 			retries += 2;
 			if (retries > 60)
@@ -81,7 +83,7 @@ enum DHT_Status_t DHT_ReadRaw(uint8_t Data[4])
 		//Response sequence began
 		//Wait for the first response to finish (low for ~80us)
 		retries = 0;
-		while (PINB0 != 1)
+		while ((DHT_Pin != High))
 		{
 			_delay_us(2);
 			retries += 2;
@@ -93,7 +95,7 @@ enum DHT_Status_t DHT_ReadRaw(uint8_t Data[4])
 		}
 		//Wait for the last response to finish (high for ~80us)
 		retries = 0;
-		while(PINB0 == 1)
+		while((DHT_Pin == High))
 		{
 			_delay_us(2);
 			retries += 2;
@@ -115,7 +117,7 @@ enum DHT_Status_t DHT_ReadRaw(uint8_t Data[4])
 			{
 				//There is always a leading low level of 50 us
 				retries = 0;
-				while(PINB0 != 1)
+				while(DHT_Pin != High)
 				{
 					_delay_us(2);
 					retries += 2;
@@ -132,11 +134,11 @@ enum DHT_Status_t DHT_ReadRaw(uint8_t Data[4])
 				{
 					//We read data bit || 26-28us means '0' || 70us means '1'
 					_delay_us(35);							//Wait for more than 28us
-					if (PINB0 == 1)				//If HIGH
+					if (DHT_Pin == High)				//If HIGH
 						BitSet(buffer[i], j);				//bit = '1'
 
 					retries = 0;
-					while(PINB0 == 1)
+					while(DHT_Pin == High)
 					{
 						_delay_us(2);
 						retries += 2;

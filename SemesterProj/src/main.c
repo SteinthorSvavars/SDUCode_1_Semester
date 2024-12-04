@@ -76,7 +76,7 @@ int main(void) {
   PORTC = 0x3F;
   PORTD = 0x00;
 
-  i2c_init(); 
+  //i2c_init(); 
  // LCD_init(); 
     
   while(1) {
