@@ -12,9 +12,9 @@
 
 int main(void){
 
-  pinMode(19, INPUT);
+  pinMode(12, INPUT);
   pinMode(4, OUTPUT);
-  digitalWrite(19, LOW);
+  digitalWrite(12, LOW);
   digitalWrite(4, LOW);
 
   uart_init(); // open the communication to the microcontroller
@@ -22,7 +22,7 @@ int main(void){
   
 
   while(1){
-    if(digitalRead(19)== HIGH){
+    if(digitalRead(12)== HIGH){
       digitalWrite(4, HIGH);
     }
     else{
