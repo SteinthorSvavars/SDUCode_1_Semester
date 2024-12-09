@@ -61,7 +61,6 @@
   "C_Cpp_Runner.useLinkTimeOptimization": false,
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "files.associations": {
-    "io.h": "c",
-    "delay.h": "c"
+    "usart.h": "c"
   }
 }

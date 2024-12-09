@@ -12,13 +12,14 @@
 
 int main(void){
 
-  uart_init(); // open the communication to the microcontroller
-  io_redirect(); // redirect input and output to the communication
-  
   pinMode(19, INPUT);
   pinMode(4, OUTPUT);
   digitalWrite(19, LOW);
   digitalWrite(4, LOW);
+
+  uart_init(); // open the communication to the microcontroller
+  io_redirect(); // redirect input and output to the communication
+  
 
   while(1){
     if(digitalRead(19)== HIGH){

@@ -1,3 +1,5 @@
+#include <Arduino.h>
+#include <stdio.h>
 #include "DHT.h"
 
 //----- Auxiliary data ----------//
@@ -51,21 +53,25 @@ enum DHT_Status_t DHT_ReadRaw(uint8_t Data[4])
 	//----- Step 1 - Start communication -----
 	if (__DHT_STATUS == DHT_Ok)
 	{
+		
 		//Request data
-		DigitalWrite(DHT_Pin, Low);			//DHT_PIN = 0
-		PinMode(DHT_Pin, Output);			//DHT_PIN = Output
+		
+		digitalWrite(12, LOW);			//DHT_PIN = 0
+		pinMode(12, OUTPUT);			//DHT_PIN = Output
+		
 		_delay_ms(__DHT_Delay_Read);
 
 		//Setup DHT_PIN as input with pull-up resistor so as to read data
-		DigitalWrite(DHT_Pin, High);		//DHT_PIN = 1 (Pull-up resistor)
-		PinMode(DHT_Pin, Input);			//DHT_PIN = Input
+		
+		digitalWrite(12, HIGH);		//DHT_PIN = 1 (Pull-up resistor)
+		pinMode(12, INPUT_PULLUP);			//DHT_PIN = Input
+		
 
 		//Wait for response for 20-40us
 		retries = 0;
-		while (DHT_Pin == High)
+		while (digitalRead(12) == 0)
 		{
-		printf("Test");
-
+			
 			_delay_us(2);
 			retries += 2;
 			if (retries > 60)
@@ -80,10 +86,11 @@ enum DHT_Status_t DHT_ReadRaw(uint8_t Data[4])
 	//----- Step 2 - Wait for response -----
 	if (__DHT_STATUS == DHT_Ok)
 	{
+		
 		//Response sequence began
 		//Wait for the first response to finish (low for ~80us)
 		retries = 0;
-		while ((DHT_Pin != High))
+		while (digitalRead(12) == 0)
 		{
 			_delay_us(2);
 			retries += 2;
@@ -95,7 +102,7 @@ enum DHT_Status_t DHT_ReadRaw(uint8_t Data[4])
 		}
 		//Wait for the last response to finish (high for ~80us)
 		retries = 0;
-		while((DHT_Pin == High))
+		while(digitalRead(12) == 0)
 		{
 			_delay_us(2);
 			retries += 2;
@@ -117,7 +124,7 @@ enum DHT_Status_t DHT_ReadRaw(uint8_t Data[4])
 			{
 				//There is always a leading low level of 50 us
 				retries = 0;
-				while(DHT_Pin != High)
+				while(digitalRead(12) == 0)
 				{
 					_delay_us(2);
 					retries += 2;
@@ -134,11 +141,12 @@ enum DHT_Status_t DHT_ReadRaw(uint8_t Data[4])
 				{
 					//We read data bit || 26-28us means '0' || 70us means '1'
 					_delay_us(35);							//Wait for more than 28us
-					if (DHT_Pin == High)				//If HIGH
-						BitSet(buffer[i], j);				//bit = '1'
-
+					if (digitalRead(6) == 1){				//If HIGH
+						bitSet(buffer[i], j);				//bit = '1'
+						printf("\n %d %d %d", buffer[i], i, j);
+					}
 					retries = 0;
-					while(DHT_Pin == High)
+					while(digitalRead(6) == 0)
 					{
 						_delay_us(2);
 						retries += 2;
@@ -153,11 +161,15 @@ enum DHT_Status_t DHT_ReadRaw(uint8_t Data[4])
 	}
 	//--------------------------------------
 
-
 	//----- Step 4 - Check checksum and return data -----
 	if (__DHT_STATUS == DHT_Ok)
 	{
-		if (((uint8_t)(buffer[0] + buffer[1] + buffer[2] + buffer[3])) != buffer[4])
+		printf("\n buffer %d", buffer[0]);
+		printf("\n buffer %d", buffer[1]);
+		printf("\n buffer %d", buffer[2]);
+		printf("\n buffer %d", buffer[3]);
+		printf("\n buffer %d", buffer[4]);
+		if (buffer[0] + buffer[1] + buffer[2] + buffer[3] == buffer[4])
 		{
 			__DHT_STATUS = DHT_Error_Checksum;	//Checksum error
 		}
@@ -169,13 +181,14 @@ enum DHT_Status_t DHT_ReadRaw(uint8_t Data[4])
 			//data[2] = Temperature		(int)
 			//data[3] = Temperature		(dec)
 			//data[4] = Checksum
-			for (i = 0 ; i < 4 ; i++)
+			for (i = 0 ; i < 4 ; i++){
 				Data[i] = buffer[i];
+			}
 		}
 	}
 	//---------------------------------------------------
-
 	return DHT_GetStatus();
+	
 }
 
 //Read temperature in Celsius.
@@ -203,6 +216,7 @@ enum DHT_Status_t DHT_Read(double *Temperature, double *Humidity)
 	//If read successfully
 	if (status == DHT_Ok)
 	{
+		
 		//Calculate values
 		*Temperature = ExtractTemperature(data[2], data[3]);
 		*Humidity = ExtractHumidity(data[0], data[1]);

@@ -12,16 +12,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <avr/io.h>
 #include <util/delay.h>
 
 
 
 /* I2C coms */
-
+/*
 #include "i2cmaster.h"
-
+*/
 /* LCD */ 
 /*
 #include "lcd.h"
@@ -32,7 +31,7 @@
 #include "tinudht.c"
 */
 
-#include "twimaster.c"
+// #include "twimaster.c"
 #include "usart.h"
 
 
@@ -62,7 +61,9 @@ int x;
 int y;
 int LED1;
 int LED2;
+int LED3;
 int LEDALL;
+int counter = 0;
 
 int main(void) {   
   /*  
@@ -72,9 +73,17 @@ int main(void) {
   
   DDRC = 0xF0;
   DDRD = 0xFF;
+  DDRB = 0x00;
   
   PORTC = 0x3F;
   PORTD = 0x00;
+  PORTB = 0x00;
+/*
+  pinMode(19, INPUT);
+  pinMode(4, OUTPUT);
+  digitalWrite(19, LOW);
+  digitalWrite(4, LOW);
+*/
 
   //i2c_init(); 
  // LCD_init(); 
@@ -113,8 +122,18 @@ int main(void) {
         _delay_ms(15);
       }
     }
-    LEDALL = LED1 ^ LED2;
+    if(PINB == 0x10){
+      _delay_ms(200);
+      if(LED1 == 0x00 || LED1 == 0x40){
+        switch(LED1){
+          case 0x00: LED3 = 0x40; break;     // RD4    
+          case 0x40: LED3 = 0x00; break;     // RD5
+        }
+      }
+    }
+    LEDALL = LED1 ^ LED2 ^ LED3;
     PORTD = LEDALL;
+    counter++;
   }
   return 0;
 }

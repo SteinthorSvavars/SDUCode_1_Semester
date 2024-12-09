@@ -23,9 +23,9 @@
 
 //----- I/O Macros -----
 //Macros to edit PORT, DDR and PIN
-#define PinMode(			x , y)	//( 		y 			?	_SET(DDR, x)	:	_CLEAR(DDR, x)		)
-#define DigitalWrite(		x, y)	//( 		y 			?	_SET(PORT, x)	:	_CLEAR(PORT, x)		)
-#define DigitalRead(        x)		//(						_GET(PIN, x)							)
+#define PinMode(			x, y)	( 		y 			?	_SET(DDR, x)	:	_CLEAR(DDR, x)		)
+#define DigitalWrite(		x, y)	( 		y 			?	_SET(PORT, x)	:	_CLEAR(PORT, x)		)
+#define DigitalRead(		x)		(						_GET(PIN, x)							)
 #define PinModeToggle(		x)		(						_TOGGLE(DDR, x)							)
 #define DigitalLevelToggle(	x)		(						_TOGGLE(PORT, x)						)
 
@@ -51,11 +51,11 @@
 
 //Definitions
 #define Input		0
-#define Output		!Input
+#define Output		1
 #define Low			0
-#define High		!Low
+#define High		1
 #define False		0
-#define True		!False
-#define print       printf
+#define True		1
+#define Print       printf       
 //------------------
 #endif
