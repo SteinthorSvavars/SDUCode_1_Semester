@@ -29,7 +29,7 @@ int main(void) {
 
 while(1) {
 
-if (PINC == 0b00111110) {
+if (PINC == 0b00111110 | PINC == 0b00111101) {
     _delay_ms(150);
     if(LED_0 == 0b00000000){
     LED_0 = 0b00010000;
