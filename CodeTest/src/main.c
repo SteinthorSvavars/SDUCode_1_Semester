@@ -19,13 +19,15 @@ int LED2 = 0;
 int main(void) {
 
   DDRC = 0xF0;
-  DDRD = 0xFF;
+  //DDRD = 0xFF;
+  DDRD |= _BV(DDD4);
   
   PORTC = 0x3F;  
 
-  DDRD |= _BV(DDD4);
+  
 
   while(1){
+    PORTC = 0x3F; 
     if(PINC == 0b00111110){
       _delay_ms(150);
       if(LED1 == 0){
@@ -41,19 +43,19 @@ int main(void) {
         LED1 = 0;
       }
   }
-  if(PINC == 0b00111101){
+  if ((PINC & (1 << 5)) == 0){
       _delay_ms(150);
-      if(LED2 == 0){
-        PORTD |= _BV(PORTD5);
-      }
-      else if(LED2 == 1){
-        PORTD &= ~_BV(PORTD5);
-      }
       if(LED2 == 0){
         LED2 = 1;
       }
       else if(LED2 == 1){
         LED2 = 0;
+      }
+      if(LED2 == 0){
+        PORTD |= _BV(PORTD4);
+      }
+      else if(LED2 == 1){
+        PORTD &= ~_BV(PORTD4);
       }
   }
   }

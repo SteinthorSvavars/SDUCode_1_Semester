@@ -6,7 +6,7 @@
 #include "adcpwm.h"
 
 volatile uint8_t _duty0 = 0, _duty1 = 0, _duty2 = 0, _timer_tick;
-
+/*/
 void pwm1_init(void){
     cli();
     DDRB |= (1<<PB1);
@@ -14,8 +14,8 @@ void pwm1_init(void){
     TCCR1A = (1 << WGM10) | (1 << COM1A1); // Fast PWM, 8-bit
     TCCR1B = (1 << CS11); // Prescaler: 8 > Frequency approx. 4 kHz
 }
-
-
+*/
+/*
 void pwm3_init(void){
     DDRB |= (1<<PB2)|(1<<PB1)|(1<<PB0);
     // Disable Timer1
@@ -26,15 +26,16 @@ void pwm3_init(void){
     sei();
     TCCR1B = (1 << CS10); // No prescaler:  Frequency approx. 150Hz
 }
-
-
+*/
+/*
 void pwm1_set_duty(unsigned char input){
     if (input <= 100){
         OCR1A = input*2.55; // 0 .. 255 range
     }
        
 }
-
+*/
+/*
 void pwm3_set_duty(uint8_t input0, uint8_t input1, uint8_t input2){
     TCNT1 = 0;
     if (input0 <= 100){
@@ -48,7 +49,7 @@ void pwm3_set_duty(uint8_t input0, uint8_t input1, uint8_t input2){
     }
        
 }
-
+*/
 void adc_init(void){
     ADMUX = (1<<REFS0); //set prescaler to 128 and turn on the ADC module
     ADCSRA = (1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)|(1<<ADEN);
@@ -66,7 +67,7 @@ uint16_t adc_read(uint8_t adc_channel){
     return ADC;
 }
 
-
+/*
 ISR(TIMER1_COMPA_vect){
     // sets the pins to HIGH at start
     if (_timer_tick == 0){
@@ -87,5 +88,5 @@ ISR(TIMER1_COMPA_vect){
     if (_timer_tick == 100){
         _timer_tick = 0;
     }
-
 }
+*/
