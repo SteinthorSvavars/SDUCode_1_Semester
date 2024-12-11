@@ -54,7 +54,8 @@ int main(void)
   }
   if (PINB & (1 << 5)){
     adc_value = adc_read(0); // Value 0-1023 representing analog voltage on pin PC0
-    if(adc_value < 700 && digitalRead(12) == HIGH){
+  printf("\n%d", adc_value);
+    if(adc_value < 650 && digitalRead(12) == HIGH){
       PORTD |= _BV(PORTD4);
     }
     else{
