@@ -8,14 +8,11 @@
  * 
  */ 
 
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <avr/io.h>
 #include <util/delay.h>
-
-
+#include <Arduino.h>
 
 /* I2C coms */
 /*
@@ -27,43 +24,13 @@
 */
 /* Temp sens */
 /*
-#include "tinudht.h"
-#include "tinudht.c"
+
 */
 
 // #include "twimaster.c"
 #include "usart.h"
-
-
-int KeyPad(void) // tekur inn input frá 4x4 keypad
-{
-    int tala = -1;
-    int input;
-    int press = 0;
-    _delay_ms(10);
-    input = PINC;  // segir a? input s? sama og hva?a takki s? ?tt ? ? PORTD
-    if(input == 0b00111110 || input == 0b00111101 || input == 0b00111011 || input == 0b00110111){
-        switch(input){
-            case 0b00111110: tala = 1; press++; break;     // RD4    
-            case 0b00111101: tala = 2; press++; break;     // RD5
-            case 0b00111011: tala = 3; press++; break;     // RD6
-            case 0b00110111: tala = 4; press++; break;    // RD7
-        }
-    }
-    _delay_ms(10);
-    if((press == 0) && (tala == -1)){
-        return tala;
-    }
-    return tala;
-}
-
-int x; 
-int y;
-int LED1;
-int LED2;
-int LED3;
-int LEDALL;
-int counter = 0;
+/* ADC */
+#include "adcpwmSES.h"
 
 int main(void) {   
   /*  
@@ -71,69 +38,73 @@ int main(void) {
   io_redirect(); // redirect input and output to the communication  
   */
   
-  DDRC = 0xF0;
-  DDRD = 0xFF;
-  DDRB = 0x00;
+  DDRC = 0xF0;  //Pins 4-7 output / Pins 0-3 inputs
+  DDRD = 0xFF;  //PIns 0-7 outputs
+  DDRB = 0xF0;  //Pins 4-7 output / Pins 0-3 inputs
   
-  PORTC = 0x3F;
-  PORTD = 0x00;
-  PORTB = 0x00;
-/*
-  pinMode(19, INPUT);
-  pinMode(4, OUTPUT);
-  digitalWrite(19, LOW);
-  digitalWrite(4, LOW);
-*/
+  PORTC = 0xF0; //Pins 4-7 Pullup / Pins 0-3 floating
+  PORTD = 0x00; //Pins 0-7 floating
+  PORTB = 0x00; //Pins 0-7 floating
+  
+
+  //pinMode(12, INPUT); //MotionSensor
+
+  DDRD |= _BV(DDD0); //LED out
+  DDRD |= _BV(DDD1); //LED ent
+  //DDRB &= ~_BV(DDB4);
 
   //i2c_init(); 
- // LCD_init(); 
+  //LCD_init(); 
+
+  unsigned int Buttons;
+  //unsigned int LDR;
+  int LED1;
+  int LED2;
     
   while(1) {
-    PORTC = 0x3F;
-    /*
-    x = KeyPad();
-    if(x == -1){
-      y = y;
+    
+    Buttons = adc_readSES(2); // Value 0-1023 representing analog voltage on pin PC0
+    _delay_ms(100);
+    if(Buttons >= 570){
+      _delay_ms(150);
+      if(LED1 == 0){
+        PORTD |= _BV(PORTD0);
+      }
+      else if(LED1 == 1){
+        PORTD &= ~_BV(PORTD0);
+      }
+      if(LED1 == 0){
+        LED1 = 1;
+      }
+      else if(LED1 == 1){
+        LED1 = 0;
+      }
     }
-    else{
-      y = x;
+    else if(Buttons < 569 && Buttons > 200){
+      _delay_ms(150);
+      if(LED2 == 0){
+        LED2 = 1;
+      }
+      else if(LED2 == 1){
+        LED2 = 0;
+      }
+      if(LED2 == 0){
+        PORTD |= _BV(PORTD1);
+      }
+      else if(LED2 == 1){
+        PORTD &= ~_BV(PORTD1);
+      }
+    }
+  /*  if (PINB & (1 << 5)){
+      LDR = adc_readSES(3); // Value 0-1023 representing analog voltage on pin PC0
+      if(LDR < 650 && digitalRead(12) == HIGH){
+        PORTD |= _BV(PORTD0);
+      }
+      else{
+        PORTD &= ~_BV(PORTD0);
+      }
       _delay_ms(100);
-    }
-    */
-    if(PINC == 0x3E){
-      _delay_ms(150);
-      if(LED1 == 0x00){
-      LED1 = 0x10;
-      _delay_ms(15);
-      }
-      else if(LED1 == 0x10){
-        LED1 = 0x00;
-        _delay_ms(15);
-      }
-    }
-    else if(PINC == 0x3D){
-      _delay_ms(150);
-      if(LED2 == 0x00){
-        LED2 = 0x20;
-        _delay_ms(15);
-      }
-      else if(LED2 == 0x20){
-        LED2 = 0x00;
-        _delay_ms(15);
-      }
-    }
-    if(PINB == 0x10){
-      _delay_ms(200);
-      if(LED1 == 0x00 || LED1 == 0x40){
-        switch(LED1){
-          case 0x00: LED3 = 0x40; break;     // RD4    
-          case 0x40: LED3 = 0x00; break;     // RD5
-        }
-      }
-    }
-    LEDALL = LED1 ^ LED2 ^ LED3;
-    PORTD = LEDALL;
-    counter++;
+    } */
   }
   return 0;
 }
