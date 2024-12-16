@@ -4,7 +4,7 @@
  * Created: 11/9/2023 10:43:27 AM
  * Author : Alin
  * 
- * DHT library https://tinusaur.wordpress.com/projects/tinudht/
+ * 
  * 
  */ 
 
@@ -32,46 +32,41 @@
 /* ADC */
 #include "adcpwmSES.h"
 
+int LED1;
+int LED2;
+
 int main(void) {   
-  /*  
+    
   uart_init(); // open the communication to the microcontroller
   io_redirect(); // redirect input and output to the communication  
-  */
-  
-  DDRC = 0xF0;  //Pins 4-7 output / Pins 0-3 inputs
-  DDRD = 0xFF;  //PIns 0-7 outputs
-  DDRB = 0xF0;  //Pins 4-7 output / Pins 0-3 inputs
-  
-  PORTC = 0xF0; //Pins 4-7 Pullup / Pins 0-3 floating
-  PORTD = 0x00; //Pins 0-7 floating
-  PORTB = 0x00; //Pins 0-7 floating
-  
+  adc_initSES(); // initialize the ADC module
 
-  //pinMode(12, INPUT); //MotionSensor
+  
+  DDRC = 0x0C;  //Pins 0-1 4-7 output / Pins 2&3 input
+  
+  PORTC = 0x00; //Pins 4-7 Pullup / Pins 0-3 floating
 
-  DDRD |= _BV(DDD0); //LED out
-  DDRD |= _BV(DDD1); //LED ent
-  //DDRB &= ~_BV(DDB4);
+  DDRB |= _BV(DDB5);
+  DDRC |= _BV(DDC2);
+  DDRC |= _BV(DDC3);
 
-  //i2c_init(); 
-  //LCD_init(); 
+
+  pinMode(12, INPUT); //MotionSensor
 
   unsigned int Buttons;
-  //unsigned int LDR;
-  int LED1;
-  int LED2;
-    
+  unsigned int LDR;
+  
   while(1) {
     
-    Buttons = adc_readSES(2); // Value 0-1023 representing analog voltage on pin PC0
+    Buttons = adc_readSES(6); // Value 0-1023 representing analog voltage on pin PC0
     _delay_ms(100);
     if(Buttons >= 570){
       _delay_ms(150);
       if(LED1 == 0){
-        PORTD |= _BV(PORTD0);
+        PORTC |= _BV(PORTC2);
       }
       else if(LED1 == 1){
-        PORTD &= ~_BV(PORTD0);
+        PORTC &= ~_BV(PORTC2);
       }
       if(LED1 == 0){
         LED1 = 1;
@@ -84,27 +79,29 @@ int main(void) {
       _delay_ms(150);
       if(LED2 == 0){
         LED2 = 1;
+        PORTB |= _BV(PORTB5);
       }
       else if(LED2 == 1){
         LED2 = 0;
+        PORTB &=~_BV(PORTB5);
       }
       if(LED2 == 0){
-        PORTD |= _BV(PORTD1);
+        PORTC |= _BV(PORTC3);
       }
       else if(LED2 == 1){
-        PORTD &= ~_BV(PORTD1);
+        PORTC &= ~_BV(PORTC3);
       }
     }
-  /*  if (PINB & (1 << 5)){
-      LDR = adc_readSES(3); // Value 0-1023 representing analog voltage on pin PC0
-      if(LDR < 650 && digitalRead(12) == HIGH){
-        PORTD |= _BV(PORTD0);
+    if (PINB & (1 << 5)){
+      LDR = adc_readSES(7); // Value 0-1023 representing analog voltage on pin PC0
+      if(LDR < 200 && digitalRead(12) == HIGH){
+        PORTC |= _BV(PORTC3);
       }
       else{
-        PORTD &= ~_BV(PORTD0);
+        PORTC &= ~_BV(PORTC3);
       }
       _delay_ms(100);
-    } */
+    } 
   }
   return 0;
 }
