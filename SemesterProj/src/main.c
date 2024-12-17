@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include <avr/io.h>
 #include <util/delay.h>
-#include <Arduino.h>
 
 /* I2C coms */
 /*
@@ -49,9 +48,7 @@ int main(void) {
   DDRB |= _BV(DDB5);
   DDRC |= _BV(DDC2);
   DDRC |= _BV(DDC3);
-
-
-  pinMode(12, INPUT); //MotionSensor
+  DDRB &=~_BV(DDB4);
 
   unsigned int Buttons;
   unsigned int LDR;
@@ -94,7 +91,7 @@ int main(void) {
     }
     if (PINB & (1 << 5)){
       LDR = adc_readSES(7); // Value 0-1023 representing analog voltage on pin PC0
-      if(LDR < 200 && digitalRead(12) == HIGH){
+      if(LDR < 200 && PINB & (1 << 4)){
         PORTC |= _BV(PORTC3);
       }
       else{
