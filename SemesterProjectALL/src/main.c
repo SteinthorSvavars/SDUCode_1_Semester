@@ -1,12 +1,3 @@
-/*
- * HelloWorld.c
- *
- * Created: 11/9/2023 10:43:27 AM
- * Author : Alin
- */ 
-
-
-
 #include <stdio.h>
 #include <avr/io.h>
 #include <util/delay.h>
@@ -172,8 +163,8 @@ int main(void) {
   DDRB &=~_BV(DDB4);  // PORTB 4  Motion Sensor : D12
   DDRB |= _BV(DDB5);  // PORTB 5  : Motion LDR controller : D13
   /*** PORTC ***/
-  DDRC |= _BV(DDC0);  // PORTC 0  Emilija PWM : A0
-  DDRC |= _BV(DDC1);  // PORTC 1  Poul  PWM : A1
+  //DDRC &=~ _BV(DDC0);  // PORTC 0  Emilija PWM : A0
+  //DDRC &=~ _BV(DDC1);  // PORTC 1  Poul  PWM : A1
   DDRC |= _BV(DDC2);  // PORTC 2  : Entrance light  : A2
   DDRC |= _BV(DDC3);  // PORTC 3  : Outside light   : A3
   //DDRC |= _BV(DDC4);  // PORTC 4  LCD : A4
@@ -184,8 +175,8 @@ int main(void) {
   DDRD |=_BV(DDD0);  // PORTD 0  Rx  : D0
   DDRD |=_BV(DDD1);  // PORTD 1  Tx  : D1
   DDRD &=~_BV(DDD2);  // PORTD 2  Emilija Button : D2
-  DDRD &=~_BV(DDD3);  // PORTD 3  Emilija Light  : D3
-  DDRD &=~_BV(DDD4);  // PORTD 4  Poul  : D4
+  DDRD |= _BV(DDD3);  // PORTD 3  Emilija Light  : D3
+  DDRD |= _BV(DDD4);  // PORTD 4  Poul light  : D4
   DDRD &=~_BV(DDD5);  // PORTD 5  Select / Stop: D5
   DDRD &=~_BV(DDD6);  // PORTD 6  Next / Lights on/off: D6
   DDRD &=~_BV(DDD7);  // PORTD 7 = input  : Hallway button  : D7
@@ -195,26 +186,26 @@ int main(void) {
   PORTB &=~ _BV(DDB1);
   PORTB &=~ _BV(DDB2);
   PORTB &=~ _BV(DDB3);
-  PORTB &=~ _BV(DDB4);
+  PORTB |= _BV(DDB4);
   PORTB &=~ _BV(DDB5);
 
   /*** C ***/
-  PORTC = _BV(DDC0);
-  PORTC = _BV(DDC1);
-  PORTC = _BV(DDC2);
-  PORTC = _BV(DDC3);
+  PORTC &=~ _BV(DDC0);
+  PORTC &=~ _BV(DDC1);
+  PORTC &=~ _BV(DDC2);
+  PORTC &=~ _BV(DDC3);
   //PORTC = _BV(DDC4);
   //PORTC &=~ _BV(DDC5);
 
   /*** D ***/
   PORTD |= _BV(DDD0);
   PORTD |= _BV(DDD1);
-  PORTD = _BV(DDD2);
-  PORTD = _BV(DDD3);
-  PORTD = _BV(DDD4);
-  PORTD = _BV(DDD5);
-  PORTD = _BV(DDD6);
-  PORTD &=~ _BV(DDD7);
+  PORTD |= _BV(DDD2);
+  PORTD &=~ _BV(DDD3);
+  PORTD &=~ _BV(DDD4);
+  PORTD |= _BV(DDD5);
+  PORTD |= _BV(DDD6);
+  PORTD |= _BV(DDD7);
 
   i2c_init(); 
   LCD_init();
@@ -223,7 +214,7 @@ int main(void) {
     if((PIND & (1 << 6)) == 0){
       Counter++;
     }
-    if(Counter == 0){
+    if(Counter == 0){     // ENT/Out
       LCD_clear();
       LCD_set_cursor(0,0);
       printf("ENT/OUT");
@@ -234,8 +225,12 @@ int main(void) {
       else{
         printf("ENT light Off");
       }
+      LCD_set_cursor(0,2);
       if(PINC & (1 << 3)){
-        
+        printf("OUT light On");
+      }
+      else{
+        print("OUT light Off");
       }
       LCD_set_cursor(0,3);
       printf("Select     Next");
@@ -243,9 +238,9 @@ int main(void) {
         ENT();
       }
     }
-    else if(Counter == 1){
+    else if(Counter == 1){      // Hallway
       LCD_clear();
-      LCD_set_cursor(0,1);
+      LCD_set_cursor(0,0);
       printf("HallWay");
       LCD_set_cursor(0,3);
       printf("Select     Next");
@@ -253,12 +248,12 @@ int main(void) {
         HallWay();
       }
     }
-    else if(Counter == 2){
+    else if(Counter == 2){      // Bedroom
       LCD_clear();
       LCD_set_cursor(0,0);
       printf("Bedroom");
       LCD_set_cursor(0,1);
-      if(PIND & (1<<2)){
+      if(PIND & (1<<3)){
         printf("Light On");
       }
       else{
@@ -270,12 +265,17 @@ int main(void) {
         BedRoom();
       }
     }
-    else if(Counter == 2){
+    else if(Counter == 3){
       LCD_clear();
       LCD_set_cursor(0,0);
       printf("Living room");
       LCD_set_cursor(0,1);
-      if()
+      if(PIND & (1<<4)){
+        printf("Light On");
+      }
+      else{
+        printf("Light Off");
+      }
       LCD_set_cursor(0,3);
       printf("Select     Next");
       if((Counter == 3 && PIND & (1<<6)) == 0){
