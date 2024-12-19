@@ -17,16 +17,36 @@
 #include "lcd.h"
 
 /*** Global ***/
-int STOP;
+int STOP; int Menu = 0;
 /*** Entrance ***/
 int LEDENT; int LEDOUT; unsigned int Buttons; unsigned int LDR;
 /*** Hallway ***/
 int LEDHALL;
 /*** Bedroom ***/
 
-int ModeSelect(void){
-
+/*    Keypad
+int KeyPad(void) // tekur inn input frá 4x4 keypad
+{
+    int tala = -1;
+    int input;
+    int press = 0;
+    _delay_ms(10);
+    input = PINC;  
+    if(input == 0b00111110 || input == 0b00111101 || input == 0b00111011 || input == 0b00110111){
+        switch(input){
+            case 0b00111110: tala = 1; press++; break;     // RD4    
+            case 0b00111101: tala = 2; press++; break;     // RD5
+            case 0b00111011: tala = 3; press++; break;     // RD6
+            case 0b00110111: tala = 4; press++; break;    // RD7
+        }
+    }
+    _delay_ms(10);
+    if((press == 0) && (tala == -1)){
+        return tala;
+    }
+    return tala;
 }
+*/
 
 void ENT(Void){   //Entrence function
 int EntranceOn = 1;
@@ -132,12 +152,14 @@ void BedRoom(void){   // Bedroom function
   }while(BedRoomOn == 1);
 }
 
+int x = 0;
+int y = 0;
+int Counter = 0;
+
 int main(void) { 
 
   uart_init(); // open the communication to the microcontroller
-  //io_redirect(); // redirect input and output to the communication
-  i2c_init(); 
-  LCD_init(); 
+  //io_redirect(); // redirect input and output to the communication 
   adc_init(); // initialize the ADC module 
   pwm3_init();
   adc_init();
@@ -193,17 +215,73 @@ int main(void) {
   PORTD = _BV(DDD5);
   PORTD = _BV(DDD6);
   PORTD &=~ _BV(DDD7);
+
+  i2c_init(); 
+  LCD_init();
     
   while(1) {
-    LCD_set_cursor(0,0);
-    printf("ENT");
-    LCD_set_cursor(0,1);
-    printf("Hall");
-    LCD_set_cursor(0,2);
-    printf("Bed");
-    LCD_set_Cursor(0,3);
-    printf("Liv");
-  }
-  
-  return 0;
-}
+    if((PIND & (1 << 6)) == 0){
+      Counter++;
+    }
+    if(Counter == 0){
+      LCD_clear();
+      LCD_set_cursor(0,0);
+      printf("ENT/OUT");
+      LCD_set_cursor(0,1);
+      if(PINC & (1 << 2)){
+        printf("ENT light On");
+      }
+      else{
+        printf("ENT light Off");
+      }
+      if(PINC & (1 << 3)){
+        
+      }
+      LCD_set_cursor(0,3);
+      printf("Select     Next");
+      if((Counter == 1 && PIND & (1<<6)) == 0){
+        ENT();
+      }
+    }
+    else if(Counter == 1){
+      LCD_clear();
+      LCD_set_cursor(0,1);
+      printf("HallWay");
+      LCD_set_cursor(0,3);
+      printf("Select     Next");
+      if((Counter == 2 && PIND & (1<<6)) == 0){
+        HallWay();
+      }
+    }
+    else if(Counter == 2){
+      LCD_clear();
+      LCD_set_cursor(0,0);
+      printf("Bedroom");
+      LCD_set_cursor(0,1);
+      if(PIND & (1<<2)){
+        printf("Light On");
+      }
+      else{
+        printf("Light Off");
+      }
+      LCD_set_cursor(0,3);
+      printf("Select     Next");
+      if((Counter == 3 && PIND & (1<<6)) == 0){
+        BedRoom();
+      }
+    }
+    else if(Counter == 2){
+      LCD_clear();
+      LCD_set_cursor(0,0);
+      printf("Living room");
+      LCD_set_cursor(0,1);
+      if()
+      LCD_set_cursor(0,3);
+      printf("Select     Next");
+      if((Counter == 3 && PIND & (1<<6)) == 0){
+        BedRoom();
+      }
+    }
+    
+    }return 0; //While (1) end
+  }// Int Main end
