@@ -56,6 +56,7 @@ int main(void) {
   while(1) {
     
     Buttons = adc_readSES(6); // Value 0-1023 representing analog voltage on pin PC0
+    //printf("\n %d", Buttons);
     _delay_ms(100);
     if(Buttons >= 570){
       _delay_ms(150);
@@ -91,7 +92,7 @@ int main(void) {
     }
     if (PINB & (1 << 5)){
       LDR = adc_readSES(7); // Value 0-1023 representing analog voltage on pin PC0
-      if(LDR < 200 && PINB & (1 << 4)){
+      if(LDR < 400 && PINB & (1 << 4)){
         PORTC |= _BV(PORTC3);
       }
       else{

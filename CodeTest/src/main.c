@@ -43,21 +43,6 @@ int main(void) {
         LED1 = 0;
       }
   }
-  if ((PINC & (1 << 5)) == 0){
-      _delay_ms(150);
-      if(LED2 == 0){
-        LED2 = 1;
-      }
-      else if(LED2 == 1){
-        LED2 = 0;
-      }
-      if(LED2 == 0){
-        PORTD |= _BV(PORTD4);
-      }
-      else if(LED2 == 1){
-        PORTD &= ~_BV(PORTD4);
-      }
-  }
   }
   return 0;
 }
