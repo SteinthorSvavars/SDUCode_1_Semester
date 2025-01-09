@@ -14,7 +14,7 @@
 int main(void)
 { 
   
-  uart_init(); 
+  uart_init();
   io_redirect();
   //pwm1_init(); // initialize PWM signal at pin PB1, frequency of 4 kHz
   //pwm3_init(); // initialize PWM signal at pin PB0, PB1, PB2 with frequency of 150 Hz
