@@ -38,8 +38,8 @@ int main(void) {
   float current_temp;
   while (1){
     current_temp = get_temperature();
-    LCD_set_cursor(0,1);
-    printf("temp is %3.2f deg. c: ",current_temp);
+    LCD_set_cursor(0,2);
+    printf("TempIs %3.2f Deg.C: ",current_temp);
     _delay_ms(500);
 
   }

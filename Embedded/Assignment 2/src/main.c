@@ -5,8 +5,6 @@
  * Author : Alin
  */ 
 
-
-
 #include <stdio.h>
 #include <avr/io.h>
 #include <util/delay.h>
@@ -22,9 +20,9 @@ int main(void) {
 
     
   while(1) {
-		
-	  printf("Type in a number \n");
+	  printf("Type in a dec num and it will be converted to hex\n");
     scanf("%d", &input);
+    _delay_ms(250);
     printf("The number you typed is %d is %x in hexadecimal \n", input, input);
 	  _delay_ms(1000)	;
 
