@@ -84,8 +84,14 @@ int main(void) {
           {
             _delay_ms(250);
           }
-          
           PORTD = PORTD << 1;
+          x = KeyPad();
+          if(x == -1){
+            y = y;
+          }
+          else{
+            y = x;
+          }
         }    
     }
 
